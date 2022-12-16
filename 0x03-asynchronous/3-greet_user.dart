@@ -1,31 +1,25 @@
 import 'dart:convert';
-import 'dart:async';
+import '3-util.dart';
 
-Future<String> fetchUserData() => Future.delayed(
-      const Duration(seconds: 2),
-      () =>
-          '{"id" : "7ee9a243-01ca-47c9-aa14-0149789764c3", "username" : "admin"}',
-    );
-
-Future<bool> checkCredentials() =>
-    Future.delayed(const Duration(seconds: 2), () => true);
-    
-greetUser() async {
+Future<String> greetUser() async {
   try {
-  return 'hello ${json.decode(await fetchUserData())['username']}';
+    final data = jsonDecode(await fetchUserData());
+    return 'Hello ${data?['username']}';
   } catch (err) {
-    print('error caught: $err');
+    return 'error caught: $err';
   }
 }
 
-loginUser() async {
- try {
-  if (await checkCredentials()) {
-    return await greetUser();
-  } else {
+Future<String> loginUser() async {
+  try {
+    final isVallid = await checkCredentials();
+    if (isVallid) {
+      print('There is a user: true');
+      return await greetUser();
+    }
+    print('There is a user: false');
     return 'Wrong credentials';
-  }
-} catch (err) {
-    print('error caught: $err');
+  } catch (err) {
+    return 'error caught: $err';
   }
 }

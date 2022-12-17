@@ -2,14 +2,20 @@ import "package:http/http.dart" as http;
 import 'dart:convert';
 
 printRmCharacters() async {
+  var url = 'https://rickandmortyapi.com/api/character/';
   try {
-    var res = await http.get(
-      Uri.parse('https://rickandmortyapi.com/api/character'),
-    );
-    var body = json.decode(res.body);
+    while (true) {
+        final res = await http.get(Uri.parse(url));
 
-    for (var i = 0; i < body['results'].length; i++) {
-      print("${body['results'][i]['name']}");
+        var json = jsonDecode(res.body);
+
+        for (var idx = 0; idx < json['results'].length; idx++) {
+            print("${json['results'][idx]['name']}");
+        }
+        if (json['info']['next'] == null) {
+            break;
+        }
+        url = json['info']['next'];
     }
   } catch (err) {
     print('error caught: $err');
